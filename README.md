@@ -51,8 +51,8 @@ git clone https://github.com/kamamijr/projeto_kafka.git
 cd projeto_kafka
 2. Subir Kafka e criar tópicos
 
-chmod +x infra/setup_inicial.sh
-./infra/setup_inicial.sh
+chmod +x infra/startup_infra.sh
+./infra/startup_infra.sh
 
 O que acontece:
 docker-compose up -d sobe Zookeeper, Kafka e Kafka-UI
