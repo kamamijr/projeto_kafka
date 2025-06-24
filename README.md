@@ -1,32 +1,37 @@
-# Projeto: Mensageria em Java (V1)
+## 📌 README.md – Projeto Mensageria em Java (V1)
 
-Este repositório contém uma prova de conceito em Java usando **Apache Kafka** para processar pedidos em tempo real.  
-Foco da **v1**: atender aos requisitos funcionais RF-1 a RF-4 :contentReference[oaicite:0]{index=0}.
+### 🖥️ Disciplina: Software Concorrente e Distribuído  
+### 📚 Curso: Bacharelado em Engenharia de Software  
 
-## Serviços
+---  
 
-1. **Order-Service**  
-   - Endpoint: `POST /orders`  
-   - Gera UUID, timestamp e lista de itens  
-   - Publica em tópico `orders` (≥ 3 partitions) :contentReference[oaicite:1]{index=1}
+## ✅ Resumo do Projeto
 
-2. **Inventory-Service**  
-   - Consome de `orders` por `orderId`  
-   - Reserva estoque (simulado)  
-   - Publica resultado (`SUCCESS`|`FAILURE`) em `inventory-events` :contentReference[oaicite:2]{index=2}
+Este projeto é uma prova de conceito de **microserviços distribuídos** usando **Apache Kafka** como backbone de mensageria. Até agora você conta com:
 
-3. **Notification-Service**  
-   - Consome de `inventory-events`  
-   - Registra no console a notificação (e-mail/SMS simulado) :contentReference[oaicite:3]{index=3}
+1. **Docker Compose** que orquestra Zookeeper, Kafka e Kafka-UI  
+2. **Setup script** (`setup_inicial.sh`) para subir tudo e criar tópicos  
+3. **Skeletons Java** de três serviços Spring Boot:
+   - **Order-Service** → publica pedidos em `orders`  
+   - **Inventory-Service** → consome `orders` e publica em `inventory-events`  
+   - **Notification-Service** → consome `inventory-events` e loga notificações  
 
-## Infraestrutura local
+O objetivo desta V1 é atender aos requisitos funcionais **RF-1** a **RF-4** de forma simples e colaborativa em GitHub.
 
-- **Docker Compose** com Kafka e ZooKeeper
-- Script para criar tópicos em `infra/create-topics.sh`
+---
 
-## Como executar
+## ✅ Requisitos para rodar
 
-1. `cd infra && ./create-topics.sh && docker-compose up -d`  
-2. Em cada serviço (`order-service`, etc):  
-   ```bash
-   mvn spring-boot:run
+- **Java 11 ou superior**  
+- **Apache Maven 3.6+**  
+- **Docker** + **Docker Compose** (v3.8+)  
+- **curl** (ou Postman / Insomnia) para testar APIs REST  
+
+---
+
+## ✅ Passo a passo de execução
+
+### 📂 1. Clonar repositório
+```bash
+git clone https://github.com/seu-usuario/turing.git
+cd turing
