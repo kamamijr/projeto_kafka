@@ -8,7 +8,6 @@
 
 ### 📚 Curso: Bacharelado em Engenharia de Software
 
-
 ---
 
 ## ✅ Visão Geral
@@ -16,18 +15,18 @@
 Este projeto é uma prova de conceito de microserviços distribuídos, em que cada serviço é desacoplado e comunica-se de forma assíncrona através de **Apache Kafka**. O fluxo completo é:
 
 1. **Order-Service**
-    - Recebe requisições HTTP `POST /orders`
-    - Cria um objeto `Order` com ID, timestamp e lista de itens
-    - Publica esse objeto em JSON no tópico Kafka `orders`
+   - Recebe requisições HTTP `POST /orders`
+   - Cria um objeto `Order` com ID, timestamp e lista de itens
+   - Publica esse objeto em JSON no tópico Kafka `orders`
 2. **Inventory-Service**
-    - Lê mensagens JSON de `orders`
-    - Converte cada JSON em um DTO local `OrderDTO` (para não depender de classes de outro serviço)
-    - Simula reserva de estoque (80% de chance de sucesso)
-    - Cria um objeto `InventoryEvent` e publica em JSON no tópico `inventory-events`
+   - Lê mensagens JSON de `orders`
+   - Converte cada JSON em um DTO local `OrderDTO` (para não depender de classes de outro serviço)
+   - Simula reserva de estoque (80% de chance de sucesso)
+   - Cria um objeto `InventoryEvent` e publica em JSON no tópico `inventory-events`
 3. **Notification-Service**
-    - Lê mensagens JSON de `inventory-events`
-    - Converte cada JSON em um DTO local `InventoryEvent`
-    - Loga uma mensagem simulando envio de e-mail/SMS
+   - Lê mensagens JSON de `inventory-events`
+   - Converte cada JSON em um DTO local `InventoryEvent`
+   - Loga uma mensagem simulando envio de e-mail/SMS
 
 Cada serviço roda em **porta distinta** (8383, 8081, 8082) para evitar conflitos e facilitar testes paralelos.
 
@@ -55,6 +54,7 @@ chmod +x infra/setup_inicial.sh
 ./infra/setup_inicial.sh
 
 O que acontece:
+cd infra
 docker-compose up -d sobe Zookeeper, Kafka e Kafka-UI
 
 Aguarda ~15 s para Kafka ficar disponível
@@ -149,3 +149,4 @@ Portas distintas: facilita testes locais sem colisão de URLs.
     └── src/
 
 
+```
