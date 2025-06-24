@@ -7,7 +7,17 @@ spring:
 
     consumer:
       group-id: notification-group
+      # deserializadores
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+
+      # ao iniciar, só lê novas mensagens (ignora offsets antigos)
+      auto-offset-reset: latest
+
       properties:
-        spring.json.trusted.packages: "*"
+        # permite desserializar pacotes do seu app
+        spring.json.trusted.packages: "com.scd.notification"
+        # desserializar todo value como o DTO local InventoryEvent
+        spring.json.value.default.type: com.scd.notification.NotificationServiceApplication$InventoryEvent
+        # não exige cabeçalhos __TypeId__
+        spring.json.add.type.headers: false

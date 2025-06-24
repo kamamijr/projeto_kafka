@@ -7,9 +7,9 @@
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-parent</artifactId>
     <version>2.7.12</version>
-    <relativePath/>
+    <relativePath/> 
   </parent>
-  <groupId>com.yourorg</groupId>
+  <groupId>com.scd</groupId>
   <artifactId>inventory-service</artifactId>
   <version>0.0.1-SNAPSHOT</version>
   <name>inventory-service</name>
@@ -17,12 +17,17 @@
     <java.version>11</java.version>
   </properties>
   <dependencies>
-    <!-- Kafka Consumer & Producer -->
+    <!-- Web API -->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-web</artifactId>
+    </dependency>
+    <!-- Kafka Producer -->
     <dependency>
       <groupId>org.springframework.kafka</groupId>
       <artifactId>spring-kafka</artifactId>
     </dependency>
-    <!-- JSON mapping -->
+    <!-- JSON serialization support -->
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-databind</artifactId>
