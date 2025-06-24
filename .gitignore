@@ -1,0 +1,12 @@
+# Java / Maven
+target/
+*.log
+
+# IDEs
+.idea/
+*.iml
+*.classpath
+*.project
+
+# Kafka state (se houver)
+data/
