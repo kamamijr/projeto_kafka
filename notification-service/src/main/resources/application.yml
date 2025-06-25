@@ -18,6 +18,6 @@ spring:
         # permite desserializar pacotes do seu app
         spring.json.trusted.packages: "com.scd.notification"
         # desserializar todo value como o DTO local InventoryEvent
-        spring.json.value.default.type: com.scd.notification.NotificationServiceApplication$InventoryEvent
+        spring.json.value.default.type: com.scd.notification.InventoryEvent
         # não exige cabeçalhos __TypeId__
         spring.json.add.type.headers: false

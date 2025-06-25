@@ -11,7 +11,11 @@ public class NotificationServiceApplication {
         SpringApplication.run(NotificationServiceApplication.class, args);
     }
 
-    @KafkaListener(topics = "inventory-events", groupId = "notification-group", containerFactory = "kafkaListenerContainerFactory")
+    @KafkaListener(
+        topics = "inventory-events",
+        groupId = "notification-group",
+        containerFactory = "kafkaListenerContainerFactory"
+    )
     public void handleInventoryEvent(InventoryEvent event) {
         // Simula envio de notificação
         System.out.printf(
@@ -19,17 +23,5 @@ public class NotificationServiceApplication {
             event.getOrderId(),
             event.getStatus()
         );
-    }
-
-    // Deve espelhar a classe InventoryEvent do Inventory-Service
-    public static class InventoryEvent {
-        private String orderId;
-        private String status;
-        // getters/setters omitidos
-
-        public String getOrderId() { return orderId; }
-        public void setOrderId(String orderId) { this.orderId = orderId; }
-        public String getStatus() { return status; }
-        public void setStatus(String status) { this.status = status; }
     }
 }

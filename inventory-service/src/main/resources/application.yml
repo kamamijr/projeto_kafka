@@ -13,7 +13,7 @@ spring:
 
       properties:
         spring.json.trusted.packages: "*"  
-        spring.json.value.default.type: com.scd.inventory.InventoryServiceApplication$OrderDTO
+        spring.json.value.default.type: com.scd.inventory.OrderDTO
         spring.json.add.type.headers: false
 
       auto-offset-reset: latest
