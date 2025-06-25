@@ -1,12 +1,14 @@
-# transforme essa explicacao em um md simplicado levando o que ja esta na explicacao de base:
-
-"""
-
-## 📌 README.md – Projeto Mensageria em Java (V1)
+## 📌 README.md – Projeto de Mensageria com Kafka (Java)
 
 ### 🖥️ Disciplina: Software Concorrente e Distribuído
 
 ### 📚 Curso: Bacharelado em Engenharia de Software
+
+### 👥 Integrantes:
+
+- Guilherme Gonçalves Dutra de Mendonça [202201692]
+- Hugo Moreno I Veiga Jardim [202201693]
+- Mikael Borges de Oliveira e Silva Junior [202201708]
 
 ---
 
@@ -41,56 +43,82 @@ Cada serviço roda em **porta distinta** (8383, 8081, 8082) para evitar conflito
 
 ---
 
-## 🚀 Como Rodar
+## 🚀 Como Rodar o Projeto
 
-### 1. Clonar o repositório
+### 1. Clonar o Repositório
 
 ```bash
 git clone https://github.com/kamamijr/projeto_kafka.git
 cd projeto_kafka
-2. Subir Kafka e criar tópicos
+```
 
-chmod +x infra/setup_inicial.sh
-./infra/setup_inicial.sh
+---
 
-O que acontece:
-cd infra
-docker-compose up -d sobe Zookeeper, Kafka e Kafka-UI
+### 2. Subir o Kafka e Criar os Tópicos
 
-Aguarda ~15 s para Kafka ficar disponível
+```bash
+chmod +x infra/startup_infra.sh
+./infra/startup_infra.sh
+```
 
-Cria os tópicos orders e inventory-events com 3 partições cada
+#### 🔍 O que esse script faz:
 
-Por que isso importa
+- Entra na pasta `infra`
+- Sobe os containers do **Zookeeper**, **Kafka** e **Kafka-UI**:
 
-Evita erros de “tópico não encontrado”
+  ```bash
+  cd infra
+  docker-compose up -d
+  ```
 
-Kafka-UI em http://localhost:8080 permite inspecionar mensagens
+- Aguarda \~15 segundos até o Kafka estar disponível
+- Cria os tópicos `orders` e `inventory-events`, cada um com **3 partições**
 
-3. Iniciar os serviços Java
-Em três terminais distintos:
+#### ✅ Por que isso importa:
 
-# 3.1 Order-Service
+- Evita erros como **"tópico não encontrado"**
+- Kafka-UI disponível em: [http://localhost:8080](http://localhost:8080)
+
+---
+
+### 3. Iniciar os Serviços Java
+
+> ⚠️ Execute cada serviço em **um terminal separado**:
+
+#### 3.1 Order-Service
+
+```bash
 cd order-service
 mvn clean spring-boot:run
+```
 
-# 3.2 Inventory-Service
+#### 3.2 Inventory-Service
+
+```bash
 cd inventory-service
 mvn clean spring-boot:run
+```
 
-# 3.3 Notification-Service
+#### 3.3 Notification-Service
+
+```bash
 cd notification-service
 mvn clean spring-boot:run
+```
 
-Detalhes técnicos:
-Cada serviço usa Spring Boot e spring-kafka
+#### ⚙️ Detalhes Técnicos:
 
-Configuração de Kafka em application.yml
+- Cada serviço usa **Spring Boot** com **spring-kafka**
+- Configuração do Kafka feita via `application.yml`
+- Mensagens serializadas em **JSON** com `JsonSerializer` / `JsonDeserializer`
 
-Serialização de mensagens em JSON com JsonSerializer/JsonDeserializer
+---
 
-🧪 Testando o Fluxo
-Enviando um pedido (Linux/macOS)
+### 🔪 Testando o Fluxo
+
+#### Enviar um Pedido (Linux/macOS)
+
+```bash
 curl -i -X POST http://localhost:8383/orders \
   -H "Content-Type: application/json" \
   -d '{
@@ -99,39 +127,50 @@ curl -i -X POST http://localhost:8383/orders \
           { "sku":"XYZ", "qty":1 }
         ]
       }'
-Enviando um pedido (Windows CMD)
-curl -i -X POST "http://localhost:8383/orders" -H "Content-Type: application/json" -d "{\"items\":[{\"sku\":\"ABC\",\"qty\":2},{\"sku\":\"XYZ\",\"qty\":1}]"
+```
 
-O que acontece:
-Order-Service retorna 200 OK e JSON do pedido criado.
+#### Enviar um Pedido (Windows CMD)
 
-Inventory-Service recebe o JSON, desserializa em OrderDTO e publica InventoryEvent.
+```cmd
+curl -i -X POST "http://localhost:8383/orders" -H "Content-Type: application/json" -d "{\"items\":[{\"sku\":\"ABC\",\"qty\":2},{\"sku\":\"XYZ\",\"qty\":1}]}"
+```
 
-Notification-Service recebe o JSON, desserializa em seu InventoryEvent local, e loga:
+#### 📬 O que acontece:
 
+- **Order-Service** retorna `200 OK` com o JSON do pedido criado.
+- **Inventory-Service** consome o JSON, desserializa em `OrderDTO` e publica um `InventoryEvent`.
+- **Notification-Service** consome o evento, desserializa em `InventoryEvent` e loga:
+
+```bash
 Notification: Pedido <ID> está com status 'SUCCESS'. Enviando e-mail/SMS...
-🔧 Pontos Importantes do Desenvolvimento
-DTOs locais em cada serviço (OrderDTO, InventoryEvent) garantem que não haja dependência de classes de outros módulos.
+```
 
-JSON puro:
+---
 
-Producer: JsonSerializer serializa objetos em JSON sem cabeçalhos de tipo.
+### 🔧 Pontos Importantes do Desenvolvimento
 
-Consumer: JsonDeserializer usa spring.json.value.default.type para mapear o JSON no DTO correto.
+- **DTOs locais** em cada serviço (`OrderDTO`, `InventoryEvent`) evitam dependência entre módulos.
 
-Sem cabeçalhos de tipo (spring.json.add.type.headers=false): simplifica a interoperabilidade entre serviços.
+- **JSON puro:**
 
-auto-offset-reset=latest: faz com que cada consumidor ignore mensagens antigas (que poderiam ter formatos diferentes) e processe apenas novas.
+  - `JsonSerializer` envia dados em JSON sem cabeçalhos de tipo.
+  - `JsonDeserializer` usa `spring.json.value.default.type` para mapear JSON para DTO.
+  - `spring.json.add.type.headers=false`: evita cabeçalhos extras, melhorando a interoperabilidade.
 
-Script robusto setup_inicial.sh:
+- **auto-offset-reset=latest**: garante que consumidores leiam apenas mensagens recentes, ignorando antigas com formatos diferentes.
 
-Limpa volumes antigos (docker-compose down -v)
+- **Script startup_infra.sh:**
 
-Espera containers e a porta 9092 estarem prontos antes de criar tópicos
+  - Remove volumes antigos com `docker-compose down -v`
+  - Espera os containers e a porta `9092` estarem prontos antes de criar tópicos
 
-Portas distintas: facilita testes locais sem colisão de URLs.
+- **Portas distintas** para os serviços: facilita testes locais sem conflitos
 
-📂 Estrutura de Pastas
+---
+
+### 📁 Estrutura de Pastas
+
+```
 .
 ├── .gitignore
 ├── README.md
@@ -147,6 +186,64 @@ Portas distintas: facilita testes locais sem colisão de URLs.
 └── notification-service/
     ├── pom.xml
     └── src/
+```
+
+## Diagramas
+
+## Diagrama de Classes
+
+![Diagrama-de-classes2-mensageria-java](https://github.com/user-attachments/assets/0b78ef1d-0d5a-49b3-9f7d-02d381aa5b98)
+
+## Diagrama de Sequência
+
+![Diagrama-de-sequência-mensageria-java](https://github.com/user-attachments/assets/af5cc485-5dda-4802-8d77-93a3153047c1)
+
+## Diagrama de Casos de Uso
+
+![Diagrama-casos-de-uso-mensageria-java](https://github.com/user-attachments/assets/c7b9b7ce-bc39-40aa-a466-79f5c1ba2b5f)
+
+## Requisitos Não Funcionais
+
+## ✅ 1. Escalabilidade – Como conseguir com Kafka?
+
+O **Apache Kafka** é altamente escalável por natureza, pois suporta:
+
+- **Partições por tópico**: cada tópico (como `orders` e `inventory-events`) pode ter múltiplas partições, permitindo que várias instâncias de consumidores leiam dados em paralelo.
+- **Grupos de consumidores**: serviços como o `Inventory-Service` podem ser replicados (escalados horizontalmente), e o Kafka balanceia automaticamente as partições entre as instâncias do mesmo grupo (`inventory-group`).
+- **Produtores e consumidores independentes**: os serviços são desacoplados, o que permite escalar cada um separadamente conforme a carga (por exemplo, posso escalar o `Notification-Service` sem impactar os demais).
+
+---
+
+## ✅ 2. Tolerância à falha – O que significa e como o Kafka ajuda?
+
+**Tolerância à falha** é a capacidade de o sistema continuar funcionando mesmo que partes dele falhem.
+
+Se o `Inventory-Service` cair enquanto consome o tópico `orders`, o Kafka **mantém as mensagens na fila**. Quando o serviço for reiniciado, ele continuará consumindo a partir do **último offset salvo**.
+
+Além disso, o Kafka oferece:
+
+- **Configuração de `acks`, `retries` e armazenamento persistente**, garantindo que mensagens não se percam em falhas.
+- **Replicação de partições**, aumentando a resiliência caso um nó do Kafka falhe (ex: `--replication-factor=2` ou `3`, com múltiplos brokers).
+
+---
+
+## ✅ 3. Idempotência – O que é e como garantir?
+
+**Idempotência** significa que a repetição da mesma operação **tem o mesmo efeito** da primeira execução.
+
+Em sistemas distribuídos, mensagens podem ser reenviadas. Então é essencial evitar efeitos colaterais duplicados.
+
+Por exemplo:  
+O `Inventory-Service` pode receber duas vezes o mesmo pedido. Para ser idempotente, é necessário verificar se o `orderId` **já foi processado** antes de reservar estoque novamente ou publicar outro evento.
+
+### 🛠️ Como garantir:
+
+- Usar um **banco de dados** ou **cache** (como Redis ou Postgres) para registrar pedidos processados.
+- Em sistemas simples, usar um **mapa em memória** para guardar `orderId`s já tratados.
+
+Além disso:
+
+- Os **producers Kafka** suportam `enable.idempotence=true`, que evita que mensagens duplicadas sejam publicadas, mesmo em caso de falhas ou reenvios.
 
 ## 🧪 Teste de Integração Automatizado
 
