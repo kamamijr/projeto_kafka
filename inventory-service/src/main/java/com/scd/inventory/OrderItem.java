@@ -1,7 +1,9 @@
 package com.scd.inventory;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class OrderItem {
     private String sku;
+    @JsonProperty("qty")
     private int quantity;
 
     public OrderItem() {}
@@ -12,3 +14,4 @@ public class OrderItem {
     public int getQuantity() { return quantity; }
     public void setQuantity(int quantity) { this.quantity = quantity; }
 }
+

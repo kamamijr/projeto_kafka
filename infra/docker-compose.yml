@@ -1,5 +1,5 @@
 # infra/docker-compose.yml
-version: '2'
+version: '3.8'         # Atualizamos para v3.8 e removemos warnings
 
 services:
   zookeeper:
@@ -17,11 +17,11 @@ services:
     depends_on:
       - zookeeper
     ports:
-      - "9092:9092"    # para acesso local (fora do Docker network)
-      - "29092:29092"  # para acesso interno (entre containers)
+      - "9092:9092"
+      - "29092:29092"
     environment:
       KAFKA_BROKER_ID: 1
-      KAFKA_ZOOKEEPER_CONNECT: 'zookeeper:2181'
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
       KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092,PLAINTEXT_HOST://kafka:29092
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
@@ -42,6 +42,19 @@ services:
       KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:29092
       KAFKA_CLUSTERS_0_ZOOKEEPER: zookeeper:2181
 
-# Observações:
-# - Zookeeper em 2181, Kafka expõe 9092 (host) e 29092 (rede interna).
-# - Auto-create desabilitado: tópicos criados via script.
+  postgres:
+    image: postgres:15
+    container_name: turing-postgres
+    depends_on:
+      - kafka
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: inventorydb
+      POSTGRES_USER: adm
+      POSTGRES_PASSWORD: 1234
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+
+volumes:
+  postgres-data:
