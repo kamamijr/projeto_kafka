@@ -148,5 +148,6 @@ Portas distintas: facilita testes locais sem colisão de URLs.
     ├── pom.xml
     └── src/
 
+## 🧪 Teste de Integração Automatizado
 
-```
+O projeto inclui um teste de integração no `inventory-service` que valida o fluxo real de eventos entre os microserviços usando o Kafka rodando via Docker. O teste publica um pedido no tópico `orders` e verifica se o evento correspondente é publicado corretamente no tópico `inventory-events`. Isso garante que o sistema está funcionando de ponta a ponta, simulando o ambiente de produção.
