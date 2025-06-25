@@ -52,7 +52,8 @@ git clone https://github.com/kamamijr/projeto_kafka.git
 cd projeto_kafka
 ```
 
----
+chmod +x infra/startup_infra.sh
+./infra/startup_infra.sh
 
 ### 2. Subir o Kafka e Criar os Tópicos
 
