@@ -50,8 +50,8 @@ git clone https://github.com/kamamijr/projeto_kafka.git
 cd projeto_kafka
 2. Subir Kafka e criar tópicos
 
-chmod +x infra/setup_inicial.sh
-./infra/setup_inicial.sh
+chmod +x infra/startup_infra.sh
+./infra/startup_infra.sh
 
 O que acontece:
 cd infra
@@ -100,7 +100,7 @@ curl -i -X POST http://localhost:8383/orders \
         ]
       }'
 Enviando um pedido (Windows CMD)
-curl -i -X POST "http://localhost:8383/orders" -H "Content-Type: application/json" -d "{\"items\":[{\"sku\":\"ABC\",\"qty\":2},{\"sku\":\"XYZ\",\"qty\":1}]"
+curl -i -X POST "http://localhost:8383/orders" -H "Content-Type: application/json" -d "{\"items\":[{\"sku\":\"ABC\",\"qty\":2},{\"sku\":\"XYZ\",\"qty\":1}]}"
 
 O que acontece:
 Order-Service retorna 200 OK e JSON do pedido criado.
