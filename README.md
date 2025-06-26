@@ -245,7 +245,3 @@ O `Inventory-Service` pode receber duas vezes o mesmo pedido. Para ser idempoten
 Além disso:
 
 - Os **producers Kafka** suportam `enable.idempotence=true`, que evita que mensagens duplicadas sejam publicadas, mesmo em caso de falhas ou reenvios.
-
-## 🧪 Teste de Integração Automatizado
-
-O projeto inclui um teste de integração no `inventory-service` que valida o fluxo real de eventos entre os microserviços usando o Kafka rodando via Docker. O teste publica um pedido no tópico `orders` e verifica se o evento correspondente é publicado corretamente no tópico `inventory-events`. Isso garante que o sistema está funcionando de ponta a ponta, simulando o ambiente de produção.
